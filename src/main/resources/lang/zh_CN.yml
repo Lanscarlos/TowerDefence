@@ -1,0 +1,63 @@
+Plugin-UnsupportedVersion: '&8[&3Tower&bDefence&8] &c错误 &8| &cPlugin does not support this outdated Minecraft version'
+Plugin-Loading: '&8[&3Tower&bDefence&8] &a良好 &8| &7Loading... &f{0}'
+Plugin-Enabled: '&8[&3Tower&bDefence&8] &a良好 &8| &3Plugin has been enabled. Currently running version &2{0}&7.'
+Plugin-Reloaded: '&8[&3Tower&bDefence&8] &a良好 &8| &3Plugin has been reloaded.'
+
+Config-Reload-Succeeded: '&8[&3Tower&bDefence&8] &a良好 &8| &7重载 Config.yml 完毕！ &8({0} ms)'
+Config-Reload-Failed:
+  - '&8[&3Tower&bDefence&8] &c错误 &8|&7 Config.yml 加载失败！'
+  - '&8[&3Tower&bDefence&8] &c错误 &8|&7 {0}'
+Regions-Load-Succeeded: '&8[&3Tower&bDefence&8] &a良好 &8| &7成功加载 &a{0}&7 个区域！ &8({1} ms)'
+Regions-Load-Failed:
+  - '&8[&3Tower&bDefence&8] &c错误 &8|&7 区域加载失败！'
+  - '&8[&3Tower&bDefence&8] &c错误 &8|&7 {0}'
+Games-Load-Succeeded: '&8[&3Tower&bDefence&8] &a良好 &8| &7成功加载 &a{0}&7 个游戏！ &8({1} ms)'
+Games-Load-Failed:
+  - '&8[&3Tower&bDefence&8] &c错误 &8|&7 游戏加载失败！'
+  - '&8[&3Tower&bDefence&8] &c错误 &8|&7 {0}'
+
+WorkSpace-Not-Found: '&8[&3Tower&bDefence&8] &c错误 &8|&7 请先进入编辑模式！'
+WorkSpace-Create-Success: '&8[&3Tower&bDefence&8] &a良好 &8|&7 成功创建区域 &a{0}&7 ！'
+WorkSpace-Edit-Success: '&8[&3Tower&bDefence&8] &a良好 &8|&7 正在编辑区域 &a{0}&7 ！'
+WorkSpace-Move-Success: '&8[&3Tower&bDefence&8] &a良好 &8|&7 成功将区域 &a{0}&7 向 &a{1}&7 移动 &a{2}&7 格！'
+WorkSpace-Move-Failed: '&8[&3Tower&bDefence&8] &c错误 &8|&7 移动区域 &a{0}&7 失败，无法找到正确方向！'
+WorkSpace-Center-Success: '&8[&3Tower&bDefence&8] &a良好 &8|&7 成功设置区域 &a{0}&7 的中心点为 x=&a{1}&7, z=&a{2}&7 ！'
+WorkSpace-Size-Success: '&8[&3Tower&bDefence&8] &a良好 &8|&7 成功设置区域 &a{0}&7 的大小为 &a{1}&7 ！'
+WorkSpace-Exit-Success: '&8[&3Tower&bDefence&8] &a良好 &8|&7 成功保存区域 &a{0}&7 的设置！'
+WorkSpace-MobSpawn-Add-Success: '&8[&3Tower&bDefence&8] &a良好 &8|&7 成功添加一个刷怪点到区域 &a{0}&7 内！'
+WorkSpace-MobSpawn-Add-Failed: '&8[&3Tower&bDefence&8] &c错误 &8|&7 刷怪点位于区域之外！'
+WorkSpace-MobSpawn-Remove-Success: '&8[&3Tower&bDefence&8] &a良好 &8|&7 成功移除区域 &a{0}&7 内的一个刷怪点！'
+WorkSpace-MobSpawn-OutOfBounds: '&8[&3Tower&bDefence&8] &e提示 &8|&7 检测到刷怪点 &a{0}&7 位于区域之外，已自动移除！'
+WorkSpace-PlayerSpawn-Add-Success: '&8[&3Tower&bDefence&8] &a良好 &8|&7 成功添加一个出生点到区域 &a{0}&7 内！'
+WorkSpace-PlayerSpawn-Add-Failed: '&8[&3Tower&bDefence&8] &c错误 &8|&7 出生点位于区域之外！'
+WorkSpace-PlayerSpawn-Remove-Success: '&8[&3Tower&bDefence&8] &a良好 &8|&7 成功移除区域 &a{0}&7 内的一个出生点！'
+WorkSpace-PlayerSpawn-OutOfBounds: '&8[&3Tower&bDefence&8] &e提示 &8|&7 检测到出生点 &a{0}&7 位于区域之外，已自动移除！'
+
+Region-Not-Found: '&8[&3Tower&bDefence&8] &c错误 &8|&7 区域 &a{0}&7 并不存在！'
+Region-Already-Existed: '&8[&3Tower&bDefence&8] &c错误 &8|&7 区域 &a{0}&7 已经存在！'
+
+Game-Not-Found: '&8[&3Tower&bDefence&8] &a良好 &8|&7 找不到游戏 &a{0}&7 ！'
+Game-Join-Success: '&8[&3Tower&bDefence&8] &a良好 &8|&7 成功加入游戏 &a{0}&7 请耐心等待游戏开始！'
+Game-Join-Failed: '&8[&3Tower&bDefence&8] &c错误 &8|&7 无法加入游戏 &a{0}&7 ！'
+Game-Join-Full: '&8[&3Tower&bDefence&8] &c错误 &8|&7 游戏 &a{0}&7 已满人！'
+Game-Join-In-Game: '&8[&3Tower&bDefence&8] &c错误 &8|&7 游戏 &a{0}&7 已经开始！'
+Game-Quit-Success: '&8[&3Tower&bDefence&8] &a良好 &8|&7 已离开游戏 &a{0}&7'
+Game-Quit-Failed: '&8[&3Tower&bDefence&8] &c错误 &8|&7 游戏 &a{0}&7 正在进行中，无法退出游戏！'
+Game-Quit-Not-In-Game: '&8[&3Tower&bDefence&8] &c错误 &8|&7 你并没有加入任何游戏！'
+
+Game-PreStart-Count-Down:
+  type: 'actionbar'
+  text: '&7距离游戏开始还有 &a{0}&7 秒！'
+Game-Start:
+  type: 'title'
+  title: '游戏开始！'
+  subtitle: '撑到最后即可获得胜利'
+  fadein: 5
+  stay: 40
+  fadeout: 5
+Game-Process-Count-Down:
+  type: 'actionbar'
+  text: '&7距离游戏结束还有 &a{0}&7 秒！'
+Game-End: '&8[&3Tower&bDefence&8] &a良好 &8|&7 游戏 &a{0}&7 结束！'
+Game-Victory: '&8[&3Tower&bDefence&8] &a良好 &8|&7 恭喜你获得游戏 &a{0}&7 的胜利！'
+Game-Defeated: '&8[&3Tower&bDefence&8] &a良好 &8|&7 很遗憾游戏 &a{0}&7 失败！'

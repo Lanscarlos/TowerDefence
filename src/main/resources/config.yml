@@ -1,0 +1,4 @@
+
+game-setting:
+  # 游戏过程中是否强制使用 冒险模式？
+  force-adventure-mode: true
