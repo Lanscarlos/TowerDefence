@@ -2,6 +2,7 @@ package top.lanscarlos.towerdefence.internal
 
 import taboolib.common.platform.function.console
 import taboolib.module.lang.asLangText
+import taboolib.module.lang.sendLang
 import top.lanscarlos.towerdefence.TowerDefence
 import top.lanscarlos.towerdefence.utils.timing
 
@@ -20,7 +21,6 @@ object Context {
         return try {
             val start = timing()
             val config = TowerDefence.config
-
             Force_Adventure_Mode = config.getBoolean("game-setting.force-adventure-mode")
 
             console().asLangText("Config-Load-Succeeded", timing(start)).also {

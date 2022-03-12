@@ -18,10 +18,8 @@ countdown: 200
 # 当怪物数量大于此值时判定游戏失败
 threshold: 16
 
-# 游戏进程监控
-schedule:
-  # 循环监控周期 [ 单位 tick ]
-  period: 20
+# 重生倒计时 tick
+respawn: 200
 
 # 生成设置
 mobs-spawn:
@@ -43,46 +41,68 @@ mobs-spawn:
 # 相关脚本设置
 # 可通过此处来给予相应奖励或提示等等
 # 常用变量
-# player - 指代场上的玩家
+# display - 游戏展示名
+# player - 指代当前玩家
+# event - 指代当前事件
+# game - 指代当前游戏对象
+# entity - 指代被击杀的实体
 script:
 
   # 当玩家加入游戏房间时
   join: |-
-    print *join!
 
   # 当玩家离开游戏房间时
   quit: |-
-    print *quit!
+    tell *quit!
 
   # 当游戏开始时
   start: |-
-    print *start!
+    tell *start!
 
   # 当游戏开始时
   stop: |-
-    print *stop!
+    tell *stop!
 
   # 当游戏开始时
   end: |-
-    print *end!
-
-  # 游戏进行时
-  # 每 1 秒执行一次
-  tick: |-
-    print *tick!
+    tell *end!
 
   # 玩家击杀敌人
   kill: |-
-    print *kill!
+    tell *kill!
 
   # 玩家死亡
   death: |-
-    print *death!
+    tell *death!
+
+  # 玩家复活
+  respawn: |-
+    tell *respawn!
 
   # 游戏胜利后执行
   victory: |-
-    print *Victory!
+    tell color inline '
+    §\
+      &a&l!! Victory !!
+      &c&l>> &7恭喜你获得了本场游戏的胜利！
+    §\
+      &d&l战绩如下：
+    §\
+       &c&l>> &7击杀次数: &3&l{{ &killed }}
+       &c&l>> &7死亡次数: &3&l{{ &death }}
+    §\
+    '
 
   # 游戏失败
   defeated: |-
-    print *Defeated!
+    tell color inline '
+    §\
+      &4&l!! Defeated !!
+      &c&l>> &7很遗憾，游戏失败！
+    §\
+      &d&l战绩如下：
+    §\
+       &c&l>> &7击杀次数: &3&l{{ &killed }}
+       &c&l>> &7死亡次数: &3&l{{ &death }}
+    §\
+    '

@@ -21,6 +21,7 @@ object ScriptHandler {
         eval(e.player, e.game.script["join"], mapOf(
             "event" to e,
             "game" to e.game,
+            "display" to e.game.display,
             "player" to e.player,
         ))
     }
@@ -30,39 +31,56 @@ object ScriptHandler {
         eval(e.player, e.game.script["quit"], mapOf(
             "event" to e,
             "game" to e.game,
+            "display" to e.game.display,
             "player" to e.player,
+            "data" to e.game.cache[e.player]!!,
+            "killed" to e.game.cache[e.player]!!.killed,
+            "death" to e.game.cache[e.player]!!.death,
         ))
     }
 
     @SubscribeEvent
     fun e(e: GameStartEvent) {
-        e.game.cache.keys.forEach {
-            eval(it, e.game.script["start"], mapOf(
+        e.game.cache.values.forEach {
+            eval(it.player, e.game.script["start"], mapOf(
                 "event" to e,
                 "game" to e.game,
-                "player" to it,
+                "display" to e.game.display,
+                "player" to it.player,
+                "data" to it,
+                "killed" to it.killed,
+                "death" to it.death,
             ))
         }
     }
 
     @SubscribeEvent
     fun e(e: GameStopEvent) {
-        e.game.cache.keys.forEach {
-            eval(it, e.game.script["stop"], mapOf(
+        e.game.cache.values.forEach {
+            eval(it.player, e.game.script["stop"], mapOf(
                 "event" to e,
                 "game" to e.game,
-                "player" to it,
+                "display" to e.game.display,
+                "player" to it.player,
+                "data" to it,
+                "killed" to it.killed,
+                "death" to it.death,
             ))
         }
     }
 
     @SubscribeEvent
     fun e(e: GameEndEvent) {
-        e.game.cache.keys.forEach {
-            eval(it, e.game.script["end"], mapOf(
+        e.game.cache.values.forEach {
+            eval(it.player, e.game.script["end"], mapOf(
                 "event" to e,
                 "game" to e.game,
+                "display" to e.game.display,
                 "player" to it,
+                "player" to it.player,
+                "data" to it,
+                "killed" to it.killed,
+                "death" to it.death,
             ))
         }
     }
@@ -72,8 +90,12 @@ object ScriptHandler {
         eval(e.player, e.game.script["kill"], mapOf(
             "event" to e,
             "game" to e.game,
+            "display" to e.game.display,
             "player" to e.player,
             "entity" to e.entity,
+            "data" to e.game.cache[e.player]!!,
+            "killed" to e.game.cache[e.player]!!.killed,
+            "death" to e.game.cache[e.player]!!.death,
         ))
     }
 
@@ -82,28 +104,53 @@ object ScriptHandler {
         eval(e.player, e.game.script["death"], mapOf(
             "event" to e,
             "game" to e.game,
+            "display" to e.game.display,
             "player" to e.player,
+            "data" to e.game.cache[e.player]!!,
+            "killed" to e.game.cache[e.player]!!.killed,
+            "death" to e.game.cache[e.player]!!.death,
+        ))
+    }
+
+    @SubscribeEvent
+    fun e(e: PlayerRespawnEvent) {
+        eval(e.player, e.game.script["respawn"], mapOf(
+            "event" to e,
+            "game" to e.game,
+            "display" to e.game.display,
+            "player" to e.player,
+            "data" to e.game.cache[e.player]!!,
+            "killed" to e.game.cache[e.player]!!.killed,
+            "death" to e.game.cache[e.player]!!.death,
         ))
     }
 
     @SubscribeEvent
     fun e(e: GameVictoryEvent) {
-        e.game.cache.keys.forEach {
-            eval(it, e.game.script["victory"], mapOf(
+        e.game.cache.values.forEach {
+            eval(it.player, e.game.script["victory"], mapOf(
                 "event" to e,
                 "game" to e.game,
-                "player" to it,
+                "display" to e.game.display,
+                "player" to it.player,
+                "data" to it,
+                "killed" to it.killed,
+                "death" to it.death,
             ))
         }
     }
 
     @SubscribeEvent
     fun e(e: GameDefeatedEvent) {
-        e.game.cache.keys.forEach {
-            eval(it, e.game.script["defeated"], mapOf(
+        e.game.cache.values.forEach {
+            eval(it.player, e.game.script["defeated"], mapOf(
                 "event" to e,
                 "game" to e.game,
+                "display" to e.game.display,
                 "player" to it,
+                "data" to it,
+                "killed" to it.killed,
+                "death" to it.death,
             ))
         }
     }

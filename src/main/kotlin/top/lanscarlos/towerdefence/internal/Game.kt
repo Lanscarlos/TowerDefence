@@ -2,16 +2,22 @@ package top.lanscarlos.towerdefence.internal
 
 import org.bukkit.GameMode
 import org.bukkit.Location
+import org.bukkit.Sound
+import org.bukkit.SoundCategory
+import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.entity.Projectile
+import org.bukkit.event.block.BlockBreakEvent
+import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.*
+import org.bukkit.event.player.PlayerDropItemEvent
+import org.bukkit.event.player.PlayerPickupItemEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.event.SubscribeEvent
-import taboolib.common.platform.function.console
-import taboolib.common.platform.function.submit
+import taboolib.common.platform.function.*
 import taboolib.common.platform.service.PlatformExecutor
 import taboolib.module.configuration.Configuration
 import taboolib.module.configuration.util.getMap
@@ -19,8 +25,7 @@ import taboolib.module.lang.asLangText
 import taboolib.platform.util.sendLang
 import top.lanscarlos.towerdefence.TowerDefence
 import top.lanscarlos.towerdefence.event.*
-import top.lanscarlos.towerdefence.nms.resetBorder
-import top.lanscarlos.towerdefence.nms.setBorder
+import top.lanscarlos.towerdefence.nms.*
 import top.lanscarlos.towerdefence.utils.*
 import java.io.File
 import kotlin.math.min
@@ -43,7 +48,7 @@ class Game(
     val minPlayer = config.getInt("min-player")
     val countdown = config.getInt("countdown")
     val threshold = config.getInt("threshold")
-    val period = config.getInt("schedule.period")
+    val respawn = config.getInt("respawn")
     val mobSpawners: List<MobSpawner> = config.getMapList("mobs-spawn").map {
         MobSpawner(
             this,
@@ -105,6 +110,13 @@ class Game(
         player.teleport(loc)
         // 设置场地边界
         player.setBorder(region.center, region.size)
+
+        inGame[player] = this
+
+        cache.keys.forEach {
+            it.sendLang("Game-Join-Broadcast", player.name, display)
+        }
+
         player.sendLang("Game-Join-Success", display)
 
         tryStart()
@@ -128,40 +140,66 @@ class Game(
      * */
     fun forceQuit(player: Player) {
         PlayerQuitGameEvent(this, player).call()
-
-        cache.remove(player)!!.let {
+        inGame.remove(player)
+        cache.remove(player)?.let {
             player.gameMode = it.mode
+            it.player.resetBorder()
+            player.resetBorderWarning()
             player.teleport(it.loc)
+            player.sendLang("Game-Quit-Success", display)
         }
-        player.sendLang("Game-Quit-Success", display)
+        cache.keys.forEach {
+            it.sendLang("Game-Quit-Broadcast", player.name, display)
+        }
     }
 
     /**
      * 尝试开始倒计时
      * */
     fun tryStart() {
-        if (isInCountdown() || cache.size < minPlayer) return // 倒计时中 或 人数不足
+        if (isInCountdown() || isInGame()) return // 倒计时中 或 游戏中
+
+        if (cache.size < minPlayer) {
+            // 人数不足
+            val require = minPlayer - cache.size
+            cache.keys.forEach {
+                it.sendLang("Game-Require-Player", require)
+            }
+            return
+        } else {
+            cache.keys.forEach {
+                it.sendLang("Game-Ready-Start", display, countdown / 20)
+            }
+        }
+
+        state = State.Countdown
+
         schedule = countdown
         maxPoint = min(maxPoint, cache.size)
         task = submit(period = 1) {
             schedule -= 1
             if (cache.size < minPlayer) {
                 // 人数不足
+                val require = minPlayer - cache.size
+                cache.keys.forEach {
+                    it.sendLang("Game-Require-Player", require)
+                }
                 task = null
+                state = State.Idle
                 cancel()
                 return@submit
             }
             if (schedule <= 0) {
                 // 倒计时完成、开始游戏
                 task = null
-                start()
                 cancel()
+                start()
                 return@submit
             }
             if (schedule % 20 == 0) {
                 val second = schedule / 20
                 cache.keys.forEach {
-                    it.sendLang("Game-PreStart-Count-Down", second)
+                    it.sendLang("Game-PreStart-Countdown", second)
                 }
             }
         }
@@ -175,12 +213,16 @@ class Game(
 
         if (!GameStartEvent(this).call()) return
 
-        cache.keys.forEach {
-            it.sendLang("Game-Start")
+        state = State.InGame
+
+        // 传送至出生点
+        cache.values.forEach {
+            it.player.teleport(region.playersSpawn[it.index])
+            it.player.sendLang("Game-Start", display)
         }
 
         schedule = 0
-        val task = submit(period = 1) {
+        task = submit(period = 1) {
             schedule += 1
             if (cache.isEmpty()) {
                 // 场上无玩家
@@ -205,17 +247,66 @@ class Game(
                     return@submit
                 }
                 val second = (time - schedule) / 20
-                cache.keys.forEach {
-                    it.sendLang("Game-Process-Count-Down", second)
+                cache.values.forEach {
+                    if (it.respawn > 0) return@forEach
+                    it.player.sendLang("Game-Process-Countdown", second)
                 }
             }
         }
     }
 
     /**
+     * 重开游戏
+     * */
+    fun restart(): String {
+        if (!isInGame()) return console().asLangText("Game-Admin-Restart-Failed", display)
+        task?.cancel()
+        // 移除所有实体
+        entities.forEach {
+            if (it.isDead) return@forEach
+            it.remove()
+        }
+        entities.clear()
+
+        // 重置刷怪器延迟
+        mobSpawners.forEach {
+            it.wait = 0
+        }
+
+        // 重置数据
+        cache.values.forEach {
+            it.respawn = 0
+            it.death = 0
+            it.killed = 0
+            // 模式转换
+            it.player.gameMode = if (Context.Force_Adventure_Mode) {
+                GameMode.ADVENTURE
+            } else {
+                it.mode
+            }
+            //传送到出生点
+            it.player.teleport(region.playersSpawn[it.index])
+            // 设置场地边界
+            it.player.setBorder(region.center, region.size)
+            it.player.resetBorderWarning()
+        }
+        state = State.Idle
+        tryStart()
+
+        return console().asLangText("Game-Admin-Restart-Success", display)
+    }
+
+    /**
      * 终止游戏
      * */
-    fun stop() {
+    fun stop(): String {
+
+        if (!isInGame()) return console().asLangText("Game-Admin-Stop-Failed", display)
+
+        GameStopEvent(this).call()
+
+        state = State.Idle
+
         task?.cancel()
 
         // 移除所有实体
@@ -227,13 +318,19 @@ class Game(
 
         // 恢复玩家的原属性
         cache.values.forEach {
+            inGame.remove(it.player)
             it.player.gameMode = it.mode
             it.player.resetBorder()
+            it.player.resetBorderWarning()
             it.player.teleport(it.loc)
         }
         maxPoint = min(region.mobSpawn.size, mobSpawners.size)
 
         end()
+
+        cache.clear()
+
+        return console().asLangText("Game-Admin-Stop-Success", display)
     }
 
     /**
@@ -286,6 +383,7 @@ class Game(
         val player: Player,
         val loc: Location = player.location, // 游戏前位置
         val mode: GameMode = player.gameMode, // 游戏前模式
+        var respawn: Int = 0, // 重生冷却时间
         var killed: Int = 0, // 怪物击杀数
         var death: Int = 0, // 死亡次数
     )
@@ -340,6 +438,7 @@ class Game(
                 return
             }
             game.forceQuit(this)
+
         }
 
         fun load(): String {
@@ -349,9 +448,14 @@ class Game(
                 }
 
                 val start = timing()
-                folder.getFiles().forEach { file ->
+                folder.ifNotExists {
+                    releaseResourceFile("games/#def.yml", true)
+                }.getFiles().forEach { file ->
                     val config = file.toConfig()
-                    val region = Region.get(config.getString("region") ?: "def") ?: error("Cannot Found Region \"${config.getString("region") ?: "def"}\"!")
+                    val region = Region.get(config.getString("region") ?: "null") ?: let {
+                        warning("Region \"${config.getString("region")}\" is undefined in Game \"${file.nameWithoutExtension}\"!")
+                        return@forEach
+                    }
                     games[file.nameWithoutExtension] = Game(file.nameWithoutExtension, config, region)
                 }
                 console().asLangText("Games-Load-Succeeded", games.values.toSet().size, timing(start)).also {
@@ -380,20 +484,86 @@ class Game(
         fun e(e: EntityDeathEvent) {
             // 此处仅处理非玩家死亡事件
             if (e.entity is Player || e.entity !in entities || e.entity.killer?.isInGame() == false) return
-            val game = e.entity.killer!!.inGame()!!
+            val game = e.entity.killer!!.inGame() ?: return
             // 禁止怪物掉落
             e.drops.clear()
+            game.cache[e.entity.killer]!!.killed += 1
             PlayerKillMobEvent(game, e.entity.killer!!, e.entity).call()
             game.removeEntity(e.entity)
         }
 
         /**
-         * 监听玩家死亡事件
+         * 处理玩家死亡
          * */
         @SubscribeEvent
-        fun e(e: org.bukkit.event.entity.PlayerDeathEvent) {
-            if (!e.entity.isInGame()) return
-            top.lanscarlos.towerdefence.event.PlayerDeathEvent(e.entity.inGame()!!, e.entity).call()
+        fun e(e: EntityDamageEvent) {
+            val player = e.entity as? Player ?: return
+            val game = player.inGame() ?: return
+
+            // 判断是否为玩家造成的攻击
+            if (e is EntityDamageByEntityEvent) {
+                val damager = (e.damager as? Player) ?: ((e.damager as? Projectile)?.shooter as? Player) ?: return
+                if (damager.isInGame()) {
+                    // 取消攻击
+                    e.isCancelled = true
+                    return
+                }
+            }
+
+
+            // 阻止玩家死亡
+            if (player.health - e.finalDamage <= 0.0) {
+                e.isCancelled = true
+
+                game.cache.keys.forEach {
+                    // 模拟死亡
+                    if (it == player) {
+                        it.playSound(it.location, Sound.ENTITY_PLAYER_DEATH, SoundCategory.PLAYERS, 1.0f, 1.0f)
+                    } else it.analogEntityDie(player)
+                }
+
+                player.gameMode = GameMode.SPECTATOR
+
+                // 模拟血色警告框
+                player.setBorderWarning()
+                player.sendLang("Player-Death")
+                // 数据处理
+                val data = game.cache[e.entity]!!
+                data.death += 1
+                top.lanscarlos.towerdefence.event.PlayerDeathEvent(game, player).call()
+                data.respawn += game.respawn
+                // 恢复生命
+                player.health = player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.value ?: 20.0
+                player.foodLevel = 20
+                submit(period = 1) {
+                    if (!player.isInGame()) {
+                        // 玩家已退出游戏
+                        player.resetBorderWarning()
+                        cancel()
+                        return@submit
+                    }
+                    if (--data.respawn <= 0) {
+                        // 重生
+                        PlayerRespawnEvent(game, player).call()
+                        player.resetBorderWarning()
+                        player.teleport(game.region.playersSpawn[data.index])
+                        // 模式转换
+                        player.gameMode = if (Context.Force_Adventure_Mode) {
+                            GameMode.ADVENTURE
+                        } else {
+                            data.mode
+                        }
+                        player.sendLang("Player-Respawn")
+                        cancel()
+                        return@submit
+                    }
+                    // 倒计时显示
+                    if (data.respawn % 20 == 0) {
+                        val second = data.respawn / 20
+                        player.sendLang("Game-Respawn-Countdown", second)
+                    }
+                }
+            }
         }
 
         /**
@@ -401,25 +571,44 @@ class Game(
          * */
         @SubscribeEvent
         fun e(e: EntityDamageByEntityEvent) {
-            if (e.entity is Player && (e.damager is Player || (e.damager as? Projectile)?.shooter is Player) ) {
+            if ((e.entity as? Player)?.isInGame() != true) return // 非游戏玩家
+            val damager = (e.damager as? Player) ?: ((e.damager as? Projectile)?.shooter as? Player) ?: return
+            if (damager.isInGame()) {
+                // 取消攻击
                 e.isCancelled = true
             }
-        }
-
-        /**
-         * 禁止场内实体捡起物品
-         * */
-        @SubscribeEvent
-        fun e(e: EntityPickupItemEvent) {
-            if ((e.entity is Player && (e.entity as Player).isInGame()) || e.entity in entities) e.isCancelled = true
         }
 
         /**
          * 禁止场内实体丢弃物品
          * */
         @SubscribeEvent
-        fun e(e: EntityDropItemEvent) {
-            if ((e.entity is Player && (e.entity as Player).isInGame()) || e.entity in entities) e.isCancelled = true
+        fun e(e: PlayerPickupItemEvent) {
+            if (e.player.isInGame()) e.isCancelled = true
+        }
+
+        /**
+         * 禁止场内玩家丢弃物品
+         * */
+        @SubscribeEvent
+        fun e(e: PlayerDropItemEvent) {
+            if (e.player.isInGame()) e.isCancelled = true
+        }
+
+        /**
+         * 禁止场内玩家破坏方块
+         * */
+        @SubscribeEvent
+        fun e(e: BlockBreakEvent) {
+            if (e.player.isInGame()) e.isCancelled = true
+        }
+
+        /**
+         * 禁止场内玩家防止方块
+         * */
+        @SubscribeEvent
+        fun e(e: BlockPlaceEvent) {
+            if (e.player.isInGame()) e.isCancelled = true
         }
 
         @Awake(LifeCycle.DISABLE)

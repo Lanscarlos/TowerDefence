@@ -4,6 +4,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Location
 import taboolib.common.io.newFile
 import taboolib.common.platform.function.console
+import taboolib.common.platform.function.releaseResourceFile
 import taboolib.module.lang.asLangText
 import top.lanscarlos.towerdefence.TowerDefence
 import top.lanscarlos.towerdefence.utils.*
@@ -77,7 +78,9 @@ class Region(
         fun load(): String {
             return try {
                 val start = timing()
-                folder.getFiles().forEach { file ->
+                folder.ifNotExists {
+                    releaseResourceFile("regions/#def.yml", true)
+                }.getFiles().forEach { file ->
                     val config = file.toConfig()
                     val center = Location(
                         Bukkit.getWorld(config.getString("world") ?: "world")!!,

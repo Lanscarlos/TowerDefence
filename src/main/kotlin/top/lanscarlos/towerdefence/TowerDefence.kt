@@ -7,6 +7,7 @@ import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.info
 import taboolib.module.configuration.Config
 import taboolib.module.configuration.Configuration
+import taboolib.module.lang.Language
 import taboolib.platform.BukkitPlugin
 import taboolib.platform.util.toProxyLocation
 import top.lanscarlos.towerdefence.internal.Context
@@ -25,6 +26,8 @@ object TowerDefence : Plugin() {
         private set
 
     override fun onEnable() {
+        Language.default = "zh_CN"
+
         Context.load()
         Region.load()
         Game.load()

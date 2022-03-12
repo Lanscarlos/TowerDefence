@@ -7,6 +7,7 @@ import org.bukkit.entity.Entity
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityDeathEvent
+import org.bukkit.event.player.PlayerArmorStandManipulateEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
@@ -42,10 +43,10 @@ class WorkSpace(
     init {
         region.editing = true
         region.playersSpawn.forEach {
-            playersSpawn.add(it to player.analogEntity(it))
+            playersSpawn.add(it to player.analogEntity(it, false))
         }
         region.mobSpawn.forEach {
-            mobSpawn.add(it to player.analogEntity(it))
+            mobSpawn.add(it to player.analogEntity(it, true))
         }
         analogEntity()
 
@@ -126,8 +127,10 @@ class WorkSpace(
 //        val loc = player.getTargetBlock(null, 100).location.clone().add(0.5, 1.0, 0.5)
         // 玩家当前位置
         val loc = player.location.block.location.clone().add(0.5, 0.0, 0.5)
+        loc.yaw = player.location.yaw
+        loc.pitch = player.location.pitch
         if (!loc.isInBounds()) return player.asLangText("WorkSpace-MobSpawn-Add-Failed")
-        mobSpawn.add(loc to player.analogEntity(loc))
+        mobSpawn.add(loc to player.analogEntity(loc, true))
         analogEntity()
         return player.asLangText("WorkSpace-MobSpawn-Add-Success", region.id)
     }
@@ -141,8 +144,10 @@ class WorkSpace(
     fun addPlayerSpawnPoint(): String {
 //        val loc = player.getTargetBlock(null, 100).location.clone().add(0.5, 1.0, 0.5)
         val loc = player.location.block.location.clone().add(0.5, 0.0, 0.5)
+        loc.yaw = player.location.yaw
+        loc.pitch = player.location.pitch
         if (!loc.isInBounds()) return player.asLangText("WorkSpace-PlayerSpawn-Add-Failed")
-        playersSpawn.add(loc to player.analogEntity(loc))
+        playersSpawn.add(loc to player.analogEntity(loc, false))
         analogEntity()
         return player.asLangText("WorkSpace-PlayerSpawn-Add-Success", region.id)
     }
@@ -201,7 +206,7 @@ class WorkSpace(
                 player.sendLang("WorkSpace-PlayerSpawn-OutOfBounds", count)
                 continue
             }
-            point.second.customName = "&a出生点 ${count++}".colored()
+            point.second.customName = "&a&l出生点 ${count++}".colored()
         }
         count = 1
         iterator = mobSpawn.iterator()
@@ -213,7 +218,7 @@ class WorkSpace(
                 player.sendLang("WorkSpace-MobSpawn-OutOfBounds", count)
                 continue
             }
-            point.second.customName = "&c刷怪点 ${count++}".colored()
+            point.second.customName = "&c&l刷怪点 ${count++}".colored()
         }
     }
 
@@ -266,6 +271,14 @@ class WorkSpace(
                     ws.removeMobSpawnPoint(it)
                 }
             }
+        }
+
+        @SubscribeEvent
+        fun e(e: PlayerArmorStandManipulateEvent) {
+            val workSpace = cache[e.player] ?: return
+            val players = workSpace.playersSpawn.map { it.second }
+            val mobs = workSpace.playersSpawn.map { it.second }
+            if (e.rightClicked in players || e.rightClicked in mobs) e.isCancelled = true
         }
 
         @Awake(LifeCycle.DISABLE)

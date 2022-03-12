@@ -3,8 +3,8 @@ Plugin-Loading: '&8[&3Tower&bDefence&8] &a良好 &8| &7Loading... &f{0}'
 Plugin-Enabled: '&8[&3Tower&bDefence&8] &a良好 &8| &3Plugin has been enabled. Currently running version &2{0}&7.'
 Plugin-Reloaded: '&8[&3Tower&bDefence&8] &a良好 &8| &3Plugin has been reloaded.'
 
-Config-Reload-Succeeded: '&8[&3Tower&bDefence&8] &a良好 &8| &7重载 Config.yml 完毕！ &8({0} ms)'
-Config-Reload-Failed:
+Config-Load-Succeeded: '&8[&3Tower&bDefence&8] &a良好 &8| &7重载 Config.yml 完毕！ &8({0} ms)'
+Config-Load-Failed:
   - '&8[&3Tower&bDefence&8] &c错误 &8|&7 Config.yml 加载失败！'
   - '&8[&3Tower&bDefence&8] &c错误 &8|&7 {0}'
 Regions-Load-Succeeded: '&8[&3Tower&bDefence&8] &a良好 &8| &7成功加载 &a{0}&7 个区域！ &8({1} ms)'
@@ -41,23 +41,62 @@ Game-Join-Success: '&8[&3Tower&bDefence&8] &a良好 &8|&7 成功加入游戏 &a{
 Game-Join-Failed: '&8[&3Tower&bDefence&8] &c错误 &8|&7 无法加入游戏 &a{0}&7 ！'
 Game-Join-Full: '&8[&3Tower&bDefence&8] &c错误 &8|&7 游戏 &a{0}&7 已满人！'
 Game-Join-In-Game: '&8[&3Tower&bDefence&8] &c错误 &8|&7 游戏 &a{0}&7 已经开始！'
+Game-Join-Broadcast: '&8[&3Tower&bDefence&8] &a良好 &8|&7 玩家 &a{0}&7 加入了 &a{1}&7 游戏！'
 Game-Quit-Success: '&8[&3Tower&bDefence&8] &a良好 &8|&7 已离开游戏 &a{0}&7'
 Game-Quit-Failed: '&8[&3Tower&bDefence&8] &c错误 &8|&7 游戏 &a{0}&7 正在进行中，无法退出游戏！'
 Game-Quit-Not-In-Game: '&8[&3Tower&bDefence&8] &c错误 &8|&7 你并没有加入任何游戏！'
+Game-Quit-Broadcast: '&8[&3Tower&bDefence&8] &a良好 &8|&7 玩家 &a{0}&7 离开了 &a{1}&7 游戏！'
 
-Game-PreStart-Count-Down:
+Game-Require-Player: '&8[&3Tower&bDefence&8] &e提示 &8|&7 游戏至少还需 &a{0}&7 名玩家才能开始！'
+Game-Ready-Start: '&8[&3Tower&bDefence&8] &a良好 &8|&7 游戏 &a{0}&7 将在 &a{1}&7 秒后开始！'
+
+Game-Admin-Stop-Success: '&8[&3Tower&bDefence&8] &a良好 &8|&7 游戏 &a{0}&7 已终止！'
+Game-Admin-Stop-Failed: '&8[&3Tower&bDefence&8] &c错误 &8|&7 游戏 &a{0}&7 并未开始！'
+Game-Admin-Restart-Success: '&8[&3Tower&bDefence&8] &a良好 &8|&7 游戏 &a{0}&7 已重开！'
+Game-Admin-Restart-Failed: '&8[&3Tower&bDefence&8] &c错误 &8|&7 游戏 &a{0}&7 并未开始！'
+
+Game-PreStart-Countdown:
   type: 'actionbar'
   text: '&7距离游戏开始还有 &a{0}&7 秒！'
 Game-Start:
   type: 'title'
-  title: '游戏开始！'
-  subtitle: '撑到最后即可获得胜利'
+  title: '&a&l游戏开始！'
+  subtitle: '&7&l撑到最后即可获得胜利'
   fadein: 5
   stay: 40
   fadeout: 5
-Game-Process-Count-Down:
+Game-Process-Countdown:
   type: 'actionbar'
   text: '&7距离游戏结束还有 &a{0}&7 秒！'
+Player-Death:
+  type: 'title'
+  title: '&a&l你已死亡！'
+  subtitle: '&7&l请耐心等待复活'
+  fadein: 5
+  stay: 40
+  fadeout: 5
+Game-Respawn-Countdown:
+  type: 'actionbar'
+  text: '&7距离重生还有 &a{0}&7 秒！'
+Player-Respawn:
+  type: 'title'
+  title: '&a&l你已复活！'
+  subtitle: '&7&l冲啊！无畏的勇士！'
+  fadein: 5
+  stay: 40
+  fadeout: 5
 Game-End: '&8[&3Tower&bDefence&8] &a良好 &8|&7 游戏 &a{0}&7 结束！'
-Game-Victory: '&8[&3Tower&bDefence&8] &a良好 &8|&7 恭喜你获得游戏 &a{0}&7 的胜利！'
-Game-Defeated: '&8[&3Tower&bDefence&8] &a良好 &8|&7 很遗憾游戏 &a{0}&7 失败！'
+Game-Victory:
+  type: 'title'
+  title: '&a&l游戏胜利！'
+  subtitle: '&7&l恭喜你获得了胜利！'
+  fadein: 5
+  stay: 40
+  fadeout: 5
+Game-Defeated:
+  type: 'title'
+  title: '&c&l游戏失败！'
+  subtitle: '&7&l还是没能撑到最后啊~'
+  fadein: 5
+  stay: 40
+  fadeout: 5

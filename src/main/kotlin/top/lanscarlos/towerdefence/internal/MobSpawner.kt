@@ -3,6 +3,7 @@ package top.lanscarlos.towerdefence.internal
 import io.lumine.xikage.mythicmobs.MythicMobs
 import org.bukkit.Location
 import org.bukkit.entity.Entity
+import taboolib.common.platform.function.info
 import taboolib.common.platform.function.warning
 
 /**
@@ -21,7 +22,7 @@ class MobSpawner(
     val amount: Int
 ) {
 
-    var wait = interval
+    var wait = 0
 
     /**
      * 周期函数
@@ -31,7 +32,7 @@ class MobSpawner(
      * */
     fun tick(schedule: Int, point: Int) {
         if (schedule < start || schedule > end) return
-        if (--wait == 0) {
+        if (--wait <= 0) {
             wait = interval
             game.region.mobSpawn.forEachIndexed { i, it ->
                 if (i >= point) return
