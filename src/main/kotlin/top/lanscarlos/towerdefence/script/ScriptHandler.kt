@@ -148,6 +148,7 @@ object ScriptHandler {
                 "game" to e.game,
                 "display" to e.game.display,
                 "player" to it,
+                "playerName" to it,
                 "data" to it,
                 "killed" to it.killed,
                 "death" to it.death,

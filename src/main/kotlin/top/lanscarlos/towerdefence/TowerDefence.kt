@@ -1,5 +1,7 @@
 package top.lanscarlos.towerdefence
 
+import com.elmakers.mine.bukkit.api.magic.MagicAPI
+import org.bukkit.Bukkit
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.event.player.PlayerDropItemEvent
 import taboolib.common.platform.Plugin
@@ -19,6 +21,10 @@ object TowerDefence : Plugin() {
 
     val plugin by lazy {
         BukkitPlugin.getInstance()
+    }
+
+    val magicAPI by lazy {
+        Bukkit.getPluginManager().getPlugin("Magic") as? MagicAPI
     }
 
     @Config("config.yml")

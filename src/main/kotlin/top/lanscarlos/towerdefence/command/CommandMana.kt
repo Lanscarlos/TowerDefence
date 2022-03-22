@@ -2,13 +2,11 @@ package top.lanscarlos.towerdefence.command
 
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
-import org.bukkit.entity.Player
-import taboolib.common.platform.ProxyCommandSender
 import taboolib.common.platform.command.CommandBody
-import taboolib.common.platform.command.CommandContext
 import taboolib.common.platform.command.CommandHeader
 import taboolib.common.platform.command.subCommand
-import taboolib.module.lang.sendLang
+import taboolib.platform.util.sendLang
+import top.lanscarlos.towerdefence.TowerDefence
 import top.lanscarlos.towerdefence.mana.ManaData.Companion.meta
 
 /**
@@ -32,7 +30,7 @@ object CommandMana {
                     Bukkit.getOnlinePlayers().map { it.name }
                 }
                 dynamic(commit = "arg") {
-                    execute<ProxyCommandSender> { sender, context, arg ->
+                    execute<CommandSender> { sender, context, arg ->
                         val player = Bukkit.getPlayerExact(context.argument(-1))!!
                         player.meta.mana += arg.toInt()
                         sender.sendLang("Command-Mana-Add-Success", player.name, arg)
@@ -46,7 +44,7 @@ object CommandMana {
                     Bukkit.getOnlinePlayers().map { it.name }
                 }
                 dynamic(commit = "arg") {
-                    execute<ProxyCommandSender> { sender, context, arg ->
+                    execute<CommandSender> { sender, context, arg ->
                         val player = Bukkit.getPlayerExact(context.argument(-1))!!
                         player.meta.mana = arg.toInt()
                         sender.sendLang("Command-Mana-Set-Success", player.name, arg)
@@ -60,7 +58,7 @@ object CommandMana {
                     Bukkit.getOnlinePlayers().map { it.name }
                 }
                 dynamic(commit = "arg") {
-                    execute<ProxyCommandSender> { sender, context, arg ->
+                    execute<CommandSender> { sender, context, arg ->
                         val player = Bukkit.getPlayerExact(context.argument(-1))!!
                         player.meta.mana -= arg.toInt()
                         sender.sendLang("Command-Mana-Sub-Success", player.name, arg)
@@ -78,7 +76,7 @@ object CommandMana {
                     Bukkit.getOnlinePlayers().map { it.name }
                 }
                 dynamic(commit = "arg") {
-                    execute<ProxyCommandSender> { sender, context, arg ->
+                    execute<CommandSender> { sender, context, arg ->
                         val player = Bukkit.getPlayerExact(context.argument(-1))!!
                         player.meta.maxMana += arg.toInt()
                         sender.sendLang("Command-MaxMana-Add-Success", player.name, arg)
@@ -92,7 +90,7 @@ object CommandMana {
                     Bukkit.getOnlinePlayers().map { it.name }
                 }
                 dynamic(commit = "arg") {
-                    execute<ProxyCommandSender> { sender, context, arg ->
+                    execute<CommandSender> { sender, context, arg ->
                         val player = Bukkit.getPlayerExact(context.argument(-1))!!
                         player.meta.maxMana = arg.toInt()
                         sender.sendLang("Command-MaxMana-Set-Success", player.name, arg)
@@ -106,7 +104,7 @@ object CommandMana {
                     Bukkit.getOnlinePlayers().map { it.name }
                 }
                 dynamic(commit = "arg") {
-                    execute<ProxyCommandSender> { sender, context, arg ->
+                    execute<CommandSender> { sender, context, arg ->
                         val player = Bukkit.getPlayerExact(context.argument(-1))!!
                         player.meta.maxMana -= arg.toInt()
                         sender.sendLang("Command-MaxMana-Sub-Success", player.name, arg)
@@ -124,7 +122,7 @@ object CommandMana {
                     Bukkit.getOnlinePlayers().map { it.name }
                 }
                 dynamic(commit = "arg") {
-                    execute<ProxyCommandSender> { sender, context, arg ->
+                    execute<CommandSender> { sender, context, arg ->
                         val player = Bukkit.getPlayerExact(context.argument(-1))!!
                         player.meta.recoverSpeed += arg.toInt()
                         sender.sendLang("Command-ResMana-Add-Success", player.name, arg)
@@ -138,7 +136,7 @@ object CommandMana {
                     Bukkit.getOnlinePlayers().map { it.name }
                 }
                 dynamic(commit = "arg") {
-                    execute<ProxyCommandSender> { sender, context, arg ->
+                    execute<CommandSender> { sender, context, arg ->
                         val player = Bukkit.getPlayerExact(context.argument(-1))!!
                         player.meta.recoverSpeed = arg.toInt()
                         sender.sendLang("Command-ResMana-Set-Success", player.name, arg)
@@ -152,10 +150,35 @@ object CommandMana {
                     Bukkit.getOnlinePlayers().map { it.name }
                 }
                 dynamic(commit = "arg") {
-                    execute<ProxyCommandSender> { sender, context, arg ->
+                    execute<CommandSender> { sender, context, arg ->
                         val player = Bukkit.getPlayerExact(context.argument(-1))!!
                         player.meta.recoverSpeed -= arg.toInt()
                         sender.sendLang("Command-ResMana-Sub-Success", player.name, arg)
+                    }
+                }
+            }
+        }
+    }
+
+    @CommandBody
+    val cast = subCommand {
+        dynamic(commit = "player") {
+            suggestion<CommandSender> { _, _ ->
+                Bukkit.getOnlinePlayers().map { it.name }
+            }
+            dynamic(commit = "skill") {
+                dynamic(commit = "mana") {
+                    dynamic(commit = "args") {
+                        execute<CommandSender> { sender, context, arg ->
+                            val player = Bukkit.getPlayerExact(context.argument(-3))!!
+                            TowerDefence.magicAPI!!.cast(context.argument(-1), arg.split(" ").toTypedArray(), sender, player)
+                            sender.sendLang("Command-Cast-Success", player.name, arg)
+                        }
+                    }
+                    execute<CommandSender> { sender, context, arg ->
+                        val player = Bukkit.getPlayerExact(context.argument(-2))!!
+                        TowerDefence.magicAPI!!.cast(context.argument(-1), arrayOf(), sender, player)
+                        sender.sendLang("Command-Cast-Success", player.name, arg)
                     }
                 }
             }

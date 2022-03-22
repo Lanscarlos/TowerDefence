@@ -28,6 +28,9 @@ Command-ResMana-Add-Success: '&8[&3Tower&bDefence&8] &a良好 &8|&7 成功为玩
 Command-ResMana-Set-Success: '&8[&3Tower&bDefence&8] &a良好 &8|&7 成功为玩家 &a{0}&7 设置 &a{1}&7 能量恢复速度！'
 Command-ResMana-Sub-Success: '&8[&3Tower&bDefence&8] &a良好 &8|&7 成功为玩家 &a{0}&7 减少 &a{1}&7 能量恢复速度！'
 
+Command-Cast-Success: '&8[&3Tower&bDefence&8] &a良好 &8|&7 成功为玩家 &a{0}&7 释放技能 &a{1}&7！'
+Command-Cast-Failed: '&8[&3Tower&bDefence&8] &c错误 &8|&7 {0}'
+
 WorkSpace-Not-Found: '&8[&3Tower&bDefence&8] &c错误 &8|&7 请先进入编辑模式！'
 WorkSpace-Create-Success: '&8[&3Tower&bDefence&8] &a良好 &8|&7 成功创建区域 &a{0}&7 ！'
 WorkSpace-Edit-Success: '&8[&3Tower&bDefence&8] &a良好 &8|&7 正在编辑区域 &a{0}&7 ！'

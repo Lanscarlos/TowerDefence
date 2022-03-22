@@ -32,6 +32,7 @@ taboolib {
 
 repositories {
     mavenCentral()
+    maven { url = uri("https://repo1.maven.org/maven2/") }
 }
 
 dependencies {
@@ -39,6 +40,7 @@ dependencies {
     compileOnly("ink.ptms:nms-all:1.0.0")
     compileOnly("ink.ptms.core:v11800:11800-minimize:api")
     compileOnly("ink.ptms.core:v11800:11800-minimize:mapped")
+    compileOnly("com.elmakers.mine.bukkit:MagicAPI:10.2")
     compileOnly(kotlin("stdlib"))
     compileOnly(fileTree("libs"))
 }
