@@ -171,14 +171,24 @@ object CommandMana {
                     dynamic(commit = "args") {
                         execute<CommandSender> { sender, context, arg ->
                             val player = Bukkit.getPlayerExact(context.argument(-3))!!
-                            TowerDefence.magicAPI!!.cast(context.argument(-1), arg.split(" ").toTypedArray(), sender, player)
-                            sender.sendLang("Command-Cast-Success", player.name, arg)
+                            if (player.meta.mana < context.argument(-1).toInt()) {
+                                sender.sendLang("Command-Cast-Failed", player.name, context.argument(-1))
+                                return@execute
+                            }
+                            player.meta.mana -= context.argument(-1).toInt()
+                            TowerDefence.magicAPI!!.cast(context.argument(-2), arg.split(" ").toTypedArray(), sender, player)
+                            sender.sendLang("Command-Cast-Success", player.name, context.argument(-2))
                         }
                     }
                     execute<CommandSender> { sender, context, arg ->
                         val player = Bukkit.getPlayerExact(context.argument(-2))!!
+                        if (player.meta.mana < arg.toInt()) {
+                            sender.sendLang("Command-Cast-Failed", player.name, arg)
+                            return@execute
+                        }
+                        player.meta.mana -= arg.toInt()
                         TowerDefence.magicAPI!!.cast(context.argument(-1), arrayOf(), sender, player)
-                        sender.sendLang("Command-Cast-Success", player.name, arg)
+                        sender.sendLang("Command-Cast-Success", player.name, context.argument(-1))
                     }
                 }
             }
