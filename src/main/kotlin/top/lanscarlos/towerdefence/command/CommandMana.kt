@@ -32,7 +32,7 @@ object CommandMana {
                 dynamic(commit = "arg") {
                     execute<CommandSender> { sender, context, arg ->
                         val player = Bukkit.getPlayerExact(context.argument(-1))!!
-                        player.meta.mana += arg.toInt()
+                        player.meta.mana += arg.toDouble()
                         sender.sendLang("Command-Mana-Add-Success", player.name, arg)
                     }
                 }
@@ -46,7 +46,7 @@ object CommandMana {
                 dynamic(commit = "arg") {
                     execute<CommandSender> { sender, context, arg ->
                         val player = Bukkit.getPlayerExact(context.argument(-1))!!
-                        player.meta.mana = arg.toInt()
+                        player.meta.mana = arg.toDouble()
                         sender.sendLang("Command-Mana-Set-Success", player.name, arg)
                     }
                 }
@@ -60,7 +60,7 @@ object CommandMana {
                 dynamic(commit = "arg") {
                     execute<CommandSender> { sender, context, arg ->
                         val player = Bukkit.getPlayerExact(context.argument(-1))!!
-                        player.meta.mana -= arg.toInt()
+                        player.meta.mana -= arg.toDouble()
                         sender.sendLang("Command-Mana-Sub-Success", player.name, arg)
                     }
                 }
@@ -78,7 +78,7 @@ object CommandMana {
                 dynamic(commit = "arg") {
                     execute<CommandSender> { sender, context, arg ->
                         val player = Bukkit.getPlayerExact(context.argument(-1))!!
-                        player.meta.maxMana += arg.toInt()
+                        player.meta.maxMana += arg.toDouble()
                         sender.sendLang("Command-MaxMana-Add-Success", player.name, arg)
                     }
                 }
@@ -92,7 +92,7 @@ object CommandMana {
                 dynamic(commit = "arg") {
                     execute<CommandSender> { sender, context, arg ->
                         val player = Bukkit.getPlayerExact(context.argument(-1))!!
-                        player.meta.maxMana = arg.toInt()
+                        player.meta.maxMana = arg.toDouble()
                         sender.sendLang("Command-MaxMana-Set-Success", player.name, arg)
                     }
                 }
@@ -106,7 +106,7 @@ object CommandMana {
                 dynamic(commit = "arg") {
                     execute<CommandSender> { sender, context, arg ->
                         val player = Bukkit.getPlayerExact(context.argument(-1))!!
-                        player.meta.maxMana -= arg.toInt()
+                        player.meta.maxMana -= arg.toDouble()
                         sender.sendLang("Command-MaxMana-Sub-Success", player.name, arg)
                     }
                 }
@@ -124,7 +124,7 @@ object CommandMana {
                 dynamic(commit = "arg") {
                     execute<CommandSender> { sender, context, arg ->
                         val player = Bukkit.getPlayerExact(context.argument(-1))!!
-                        player.meta.recoverSpeed += arg.toInt()
+                        player.meta.recoverSpeed += arg.toDouble()
                         sender.sendLang("Command-ResMana-Add-Success", player.name, arg)
                     }
                 }
@@ -138,7 +138,7 @@ object CommandMana {
                 dynamic(commit = "arg") {
                     execute<CommandSender> { sender, context, arg ->
                         val player = Bukkit.getPlayerExact(context.argument(-1))!!
-                        player.meta.recoverSpeed = arg.toInt()
+                        player.meta.recoverSpeed = arg.toDouble()
                         sender.sendLang("Command-ResMana-Set-Success", player.name, arg)
                     }
                 }
@@ -152,7 +152,7 @@ object CommandMana {
                 dynamic(commit = "arg") {
                     execute<CommandSender> { sender, context, arg ->
                         val player = Bukkit.getPlayerExact(context.argument(-1))!!
-                        player.meta.recoverSpeed -= arg.toInt()
+                        player.meta.recoverSpeed -= arg.toDouble()
                         sender.sendLang("Command-ResMana-Sub-Success", player.name, arg)
                     }
                 }
@@ -171,22 +171,22 @@ object CommandMana {
                     dynamic(commit = "args") {
                         execute<CommandSender> { sender, context, arg ->
                             val player = Bukkit.getPlayerExact(context.argument(-3))!!
-                            if (player.meta.mana < context.argument(-1).toInt()) {
+                            if (player.meta.mana < context.argument(-1).toDouble()) {
                                 sender.sendLang("Command-Cast-Failed", player.name, context.argument(-1))
                                 return@execute
                             }
-                            player.meta.mana -= context.argument(-1).toInt()
+                            player.meta.mana -= context.argument(-1).toDouble()
                             TowerDefence.magicAPI!!.cast(context.argument(-2), arg.split(" ").toTypedArray(), sender, player)
                             sender.sendLang("Command-Cast-Success", player.name, context.argument(-2))
                         }
                     }
                     execute<CommandSender> { sender, context, arg ->
                         val player = Bukkit.getPlayerExact(context.argument(-2))!!
-                        if (player.meta.mana < arg.toInt()) {
+                        if (player.meta.mana < arg.toDouble()) {
                             sender.sendLang("Command-Cast-Failed", player.name, arg)
                             return@execute
                         }
-                        player.meta.mana -= arg.toInt()
+                        player.meta.mana -= arg.toDouble()
                         TowerDefence.magicAPI!!.cast(context.argument(-1), arrayOf(), sender, player)
                         sender.sendLang("Command-Cast-Success", player.name, context.argument(-1))
                     }

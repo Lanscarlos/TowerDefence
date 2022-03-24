@@ -19,11 +19,15 @@ object ManaPlaceholder : PlaceholderExpansion {
     override fun onPlaceholderRequest(player: Player?, args: String): String {
         val meta = player?.meta ?: return "UNKNOWN_PLAYER"
         return when (args) {
-            "mana" -> meta.mana.toString()
-            "maxmana" -> meta.maxMana.toString()
-            "resmana" -> meta.recoverSpeed.toString()
+            "mana" -> meta.mana.format()
+            "maxmana" -> meta.maxMana.format()
+            "resmana" -> meta.recoverSpeed.format()
             else -> "UNKNOWN_ARG"
         }
+    }
+
+    fun Double.format(): String {
+        return "%.2f".format(this)
     }
 
 }

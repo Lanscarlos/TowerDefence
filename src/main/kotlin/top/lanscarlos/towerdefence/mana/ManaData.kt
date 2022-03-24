@@ -15,20 +15,20 @@ class ManaData(
     val player: Player
 ) {
 
-    var mana = 100
+    var mana = 100.0
         set(value) {
             field = if (value >= maxMana) maxMana
-            else if (value <= 0) 0
+            else if (value <= 0) 0.0
             else value
         }
-    var maxMana = 100
+    var maxMana = 100.0
         set(value) {
             field = value
             if (mana > value) {
                 mana = value
             }
         }
-    var recoverSpeed = 5
+    var recoverSpeed = 5.0
         set(value) {
             if (value >= 0) field = value
         }
@@ -36,6 +36,10 @@ class ManaData(
     fun recover() {
         if (mana >= maxMana) return
         mana += recoverSpeed
+    }
+
+    fun Double.format(): String {
+        return "%.2f".format(this)
     }
 
     companion object {
