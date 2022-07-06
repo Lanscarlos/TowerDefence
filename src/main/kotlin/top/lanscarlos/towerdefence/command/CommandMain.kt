@@ -17,6 +17,7 @@ import top.lanscarlos.towerdefence.internal.Game.Companion.games
 import top.lanscarlos.towerdefence.internal.Game.Companion.inGame
 import top.lanscarlos.towerdefence.internal.Game.Companion.joinGame
 import top.lanscarlos.towerdefence.internal.Game.Companion.quitGame
+import top.lanscarlos.towerdefence.internal.Occupation
 import top.lanscarlos.towerdefence.internal.Region
 import top.lanscarlos.towerdefence.nms.NMSHandler
 
@@ -43,8 +44,14 @@ object CommandMain {
             Game.load().let {
                 if (sender is Player) sender.sendMessage(it)
             }
+            Occupation.load().let {
+                if (sender is Player) sender.sendMessage(it)
+            }
         }
     }
+
+    @CommandBody(permission = "towerdefence.command.occupation")
+    val occupation = CommandOccupation.command
 
     @CommandBody(permission = "towerdefence.command.region")
     val region = CommandRegion.command

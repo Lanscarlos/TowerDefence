@@ -1,4 +1,21 @@
 
+database-setting:
+  enable: false
+  host: localhost
+  port: 3306
+  user: root
+  password: 12345
+  database: minecraft
+  table-prefix: 'tower_defence'
+
 game-setting:
   # 游戏过程中是否强制使用 冒险模式？
   force-adventure-mode: true
+
+  # 默认的职业
+  default-occupation: 'example-occupation'
+
+  # 经验转化效率
+  # 若为 0.5 则玩家实际拾取 2 经验时增加 1点 职业等级经验
+  # 若为 1.0 则玩家实际拾取 2 经验时增加 2点 职业等级经验
+  exp-conversion-efficiency: 1.0

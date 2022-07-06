@@ -156,6 +156,21 @@ object ScriptHandler {
         }
     }
 
+    @SubscribeEvent
+    fun e(e: PlayerUpgradeEvent) {
+        eval(e.player, e.game.script["upgrade"], mapOf(
+            "event" to e,
+            "game" to e.game,
+            "display" to e.game.display,
+            "player" to e.player,
+            "data" to e.game.cache[e.player]!!,
+            "killed" to e.game.cache[e.player]!!.killed,
+            "death" to e.game.cache[e.player]!!.death,
+            "occupation" to e.occupation,
+            "level" to e.level
+        ))
+    }
+
     fun eval(player: Player, script: String?, data: Map<String, Any?> = mapOf()): CompletableFuture<Any?> {
         if (script == null || script.isEmpty()) return CompletableFuture.completedFuture(false)
         return try {

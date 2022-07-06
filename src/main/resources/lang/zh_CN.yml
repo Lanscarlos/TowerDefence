@@ -15,6 +15,10 @@ Games-Load-Succeeded: '&8[&3Tower&bDefence&8] &a良好 &8| &7成功加载 &a{0}&
 Games-Load-Failed:
   - '&8[&3Tower&bDefence&8] &c错误 &8|&7 游戏加载失败！'
   - '&8[&3Tower&bDefence&8] &c错误 &8|&7 {0}'
+Occupations-Load-Succeeded: '&8[&3Tower&bDefence&8] &a良好 &8| &7成功加载 &a{0}&7 个职业！ &8({1} ms)'
+Occupations-Load-Failed:
+  - '&8[&3Tower&bDefence&8] &c错误 &8|&7 职业加载失败！'
+  - '&8[&3Tower&bDefence&8] &c错误 &8|&7 {0}'
 
 Command-Mana-Add-Success: '&8[&3Tower&bDefence&8] &a良好 &8|&7 成功为玩家 &a{0}&7 增加 &a{1}&7 能量！'
 Command-Mana-Set-Success: '&8[&3Tower&bDefence&8] &a良好 &8|&7 成功为玩家 &a{0}&7 设置 &a{1}&7 能量！'
@@ -30,6 +34,11 @@ Command-ResMana-Sub-Success: '&8[&3Tower&bDefence&8] &a良好 &8|&7 成功为玩
 
 Command-Cast-Success: '&8[&3Tower&bDefence&8] &a良好 &8|&7 成功为玩家 &a{0}&7 释放技能 &a{1}&7！'
 Command-Cast-Failed: '&8[&3Tower&bDefence&8] &c错误 &8|&7 玩家 &a{0}&7 能量不足 &a{1}&7 点！'
+
+Occupation-Not-Found: '&8[&3Tower&bDefence&8] &c错误 &8|&7 职业 &a{0}&7 未找到！'
+Occupation-Give: '&8[&3Tower&bDefence&8] &a良好 &8|&7 成功给予玩家 &a{0}&7 职业 &a{1}&7 ！'
+Occupation-Remove: '&8[&3Tower&bDefence&8] &a良好 &8|&7 成功移除玩家 &a{0}&7 的职业 &a{1}&7 ！'
+Occupation-Level-Up: '&8[&3Tower&bDefence&8] &a良好 &8|&7 玩家 &a{0}&7 的职业 &a{1}&7 成功升级至 &a{2}&7 级！'
 
 WorkSpace-Not-Found: '&8[&3Tower&bDefence&8] &c错误 &8|&7 请先进入编辑模式！'
 WorkSpace-Create-Success: '&8[&3Tower&bDefence&8] &a良好 &8|&7 成功创建区域 &a{0}&7 ！'

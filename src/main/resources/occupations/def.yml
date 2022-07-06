@@ -1,0 +1,27 @@
+# 内部 ID
+example-occupation:
+  display: '测试职业'
+  max-exp: 100
+  # 升级后，最大经验值会 x1.5
+  max-exp-ratio: 1.5
+  item:
+    mat: 'apple'
+    name: '普通的苹果'
+    lore:
+      - '职业：{{display}}'
+      - '属性：'
+      - '攻击：{{attack}}'
+      - '防御：{{defence}}'
+      - '等级：{{level}}'
+      - '经验：{{exp}}/{{max_exp}}'
+  attributes:
+    # 攻击力属性词条
+    attack:
+      # 初始值
+      def: 3
+      # 每升一级增幅
+      levelup: 3
+    # 防御力词条
+    defense:
+      def: 0
+      levelup: 2

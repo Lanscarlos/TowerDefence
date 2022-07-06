@@ -22,6 +22,7 @@ import taboolib.common.platform.service.PlatformExecutor
 import taboolib.module.configuration.Configuration
 import taboolib.module.configuration.util.getMap
 import taboolib.module.lang.asLangText
+import taboolib.platform.util.giveItem
 import taboolib.platform.util.sendLang
 import top.lanscarlos.towerdefence.TowerDefence
 import top.lanscarlos.towerdefence.event.*
@@ -215,8 +216,20 @@ class Game(
 
         state = State.InGame
 
-        // 传送至出生点
+        // 遍历所有玩家
         cache.values.forEach {
+
+            if (it.occupation == null) {
+                it.occupation = Occupation.get(Context.Default_Occupation)
+            }
+            // 给予职业物品
+            val item = it.occupation?.buildItem(it.player)
+            item?.also { itemStack -> it.player.giveItem(itemStack) } ?: warning("Default_Occupation is null!")
+
+            // 调整玩家经验值
+
+
+            // 传送至出生点
             it.player.teleport(region.playersSpawn[it.index])
             it.player.sendLang("Game-Start", display)
         }
@@ -381,6 +394,7 @@ class Game(
     inner class PlayerCache(
         val index: Int,
         val player: Player,
+        var occupation: Occupation? = null, // 玩家选择的职业
         val loc: Location = player.location, // 游戏前位置
         val mode: GameMode = player.gameMode, // 游戏前模式
         var respawn: Int = 0, // 重生冷却时间
@@ -502,14 +516,13 @@ class Game(
 
             // 判断是否为玩家造成的攻击
             if (e is EntityDamageByEntityEvent) {
-                val damager = (e.damager as? Player) ?: ((e.damager as? Projectile)?.shooter as? Player) ?: return
-                if (damager.isInGame()) {
+                val damager = (e.damager as? Player) ?: ((e.damager as? Projectile)?.shooter as? Player)
+                if (damager?.isInGame() == true) {
                     // 取消攻击
                     e.isCancelled = true
                     return
                 }
             }
-
 
             // 阻止玩家死亡
             if (player.health - e.finalDamage <= 0.0) {

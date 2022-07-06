@@ -75,6 +75,10 @@ script:
   death: |-
     tell *death!
 
+  # 玩家升级
+  upgrade: |-
+    tell *upgrade!
+
   # 玩家复活
   respawn: |-
     tell *respawn!
